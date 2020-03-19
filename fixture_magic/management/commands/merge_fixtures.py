@@ -1,4 +1,6 @@
-from __future__ import print_function
+from __future__ import print_function, unicode_literals
+
+from six import string_types
 
 import json
 
@@ -30,7 +32,7 @@ class Command(BaseCommand):
                     key_unique = '|'.join([
                         value
                         for value in obj['fields'].values()
-                        if isinstance(value, str)
+                        if isinstance(value, string_types)
                     ])
                 key = '{}|{}'.format(key, key_unique)
 
