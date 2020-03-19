@@ -17,11 +17,23 @@ class Command(BaseCommand):
         Add all the unseen objects into output.
         """
         seen = set()
+        output = []
 
         for file_ in files:
             with open(file_, 'r') as fp:
                 data = json.load(fp)
             for obj in data:
-                seen.add(obj)
+                key = '{}|'.format(obj['model'])
+                if 'pk' in obj.keys():
+                    key += obj['pk']
+                else:
+                    key += '|'.join([
+                        value
+                        for value in obj.fields.values()
+                        if isinstance(value, str)
+                    ])
+                if key not in seen:
+                    seen.add(key)
+                    output.append(obj)
 
-        print(json.dumps(list(seen), sort_keys=True, indent=4))
+        print(json.dumps(output, sort_keys=True, indent=4))
