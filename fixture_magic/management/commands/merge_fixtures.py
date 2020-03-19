@@ -1,21 +1,8 @@
 from __future__ import print_function
 
-try:
-    import json
-except ImportError:
-    from django.utils import simplejson as json
+import json
 
 from django.core.management.base import BaseCommand
-
-
-def write_json(output):
-    try:
-        # check our json import supports sorting keys
-        json.dumps([1], sort_keys=True)
-    except TypeError:
-        print(json.dumps(output, indent=4))
-    else:
-        print(json.dumps(output, sort_keys=True, indent=4))
 
 
 class Command(BaseCommand):
@@ -30,15 +17,18 @@ class Command(BaseCommand):
         Add all the unseen objects into output.
         """
         output = []
-        seen = {}
+        seen = set()
 
-        for f in files:
-            f = open(f)
-            data = json.loads(f.read())
+        for file_ in files:
+            with open(file_, 'w') as fp:
+                data = json.load(fp)
             for obj in data:
-                key = '%s|%s' % (obj['model'], obj['pk'])
+                key = '{}|{}'.format(
+                    obj.get('model'),
+                    obj.get('pk')
+                )
                 if key not in seen:
-                    seen[key] = 1
+                    seen.add(key)
                     output.append(obj)
 
-        write_json(output)
+        print(json.dumps(output, sort_keys=True, indent=4))
