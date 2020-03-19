@@ -23,15 +23,17 @@ class Command(BaseCommand):
             with open(file_, 'r') as fp:
                 data = json.load(fp)
             for obj in data:
-                key = '{}|'.format(obj['model'])
+                key = '{}'.format(obj['model'])
                 if 'pk' in obj.keys():
-                    key += obj['pk']
+                    key_unique = obj['pk']
                 else:
-                    key += '|'.join([
+                    key_unique = '|'.join([
                         value
                         for value in obj['fields'].values()
                         if isinstance(value, str)
                     ])
+                key = '{}|{}'.format(key, key_unique)
+
                 if key not in seen:
                     seen.add(key)
                     output.append(obj)
