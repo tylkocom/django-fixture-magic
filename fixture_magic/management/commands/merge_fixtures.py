@@ -19,7 +19,7 @@ class Command(BaseCommand):
         seen = set()
 
         for file_ in files:
-            with open(file_, 'w') as fp:
+            with open(file_, 'r') as fp:
                 data = json.load(fp)
             for obj in data:
                 seen.add(obj)
