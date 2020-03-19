@@ -16,19 +16,12 @@ class Command(BaseCommand):
         Load a bunch of json files.  Store the pk/model in a seen dictionary.
         Add all the unseen objects into output.
         """
-        output = []
         seen = set()
 
         for file_ in files:
             with open(file_, 'w') as fp:
                 data = json.load(fp)
             for obj in data:
-                key = '{}|{}'.format(
-                    obj.get('model'),
-                    obj.get('pk')
-                )
-                if key not in seen:
-                    seen.add(key)
-                    output.append(obj)
+                seen.add(obj)
 
-        print(json.dumps(output, sort_keys=True, indent=4))
+        print(json.dumps(list(seen), sort_keys=True, indent=4))
