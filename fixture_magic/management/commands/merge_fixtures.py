@@ -28,7 +28,7 @@ class Command(BaseCommand):
             with open(file_, 'r') as fp:
                 data = json.load(fp)
             for obj in data:
-                key = '{}'.format(obj['model'])
+                model_name = obj['model']
                 if 'pk' in obj.keys():
                     key_unique = obj['pk']
                 else:
@@ -37,7 +37,7 @@ class Command(BaseCommand):
                         for value in obj['fields'].values()
                         if isinstance(value, string_types)
                     ])
-                key = '{}|{}'.format(key, key_unique)
+                key = '{}|{}'.format(model_name, key_unique)
 
                 if key not in seen:
                     seen.add(key)
