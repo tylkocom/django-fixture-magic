@@ -29,7 +29,7 @@ class Command(BaseCommand):
                 else:
                     key += '|'.join([
                         value
-                        for value in obj.fields.values()
+                        for value in obj['fields'].values()
                         if isinstance(value, str)
                     ])
                 if key not in seen:
