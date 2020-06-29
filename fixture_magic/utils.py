@@ -84,7 +84,7 @@ def add_to_serialize_list(objs):
         model_name = getattr(obj._meta, 'model_name',
                              getattr(obj._meta, 'module_name', None))
         ignored_models = getattr(settings, 'FIXTURE_IGNORE_MODELS', [])
-        full_name = "%s.%s".format(obj._meta.app_label, model_name)
+        full_name = "%s.%s" % (obj._meta.app_label, model_name)
         if full_name in ignored_models:
             continue
         key = "%s:%s:%s" % (obj._meta.app_label, model_name, obj.pk)
