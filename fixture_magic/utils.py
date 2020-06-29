@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 serialize_me = []
 seen = {}
@@ -82,8 +83,9 @@ def add_to_serialize_list(objs):
             obj = obj._meta.proxy_for_model.objects.get(pk=obj.pk)
         model_name = getattr(obj._meta, 'model_name',
                              getattr(obj._meta, 'module_name', None))
+        ignored_models = getattr(settings, 'FIXTURE_IGNORE_MODELS', [])
         key = "%s:%s:%s" % (obj._meta.app_label, model_name, obj.pk)
 
-        if key not in seen:
+        if key not in seen and key not in ignored_models:
             serialize_me.append(obj)
             seen[key] = 1
