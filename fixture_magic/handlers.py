@@ -2,12 +2,6 @@ from django.conf import settings
 from django.db import models
 from django.utils.module_loading import import_string
 
-from fixture_magic.utils import (
-    add_to_serialize_list,
-    get_fields,
-    get_m2m,
-)
-
 FIXTURE_MAGIC_HANDLERS_SETTING_STRING = 'FIXTURE_MAGIC_HANDLERS'
 
 
@@ -25,6 +19,11 @@ def prepare_handlers():
 class BaseModelHandler:
     @staticmethod
     def handle(instance):
+        from fixture_magic.utils import (
+            add_to_serialize_list,
+            get_fields,
+            get_m2m,
+        )
         for field in get_fields(instance):
             if isinstance(field, models.ForeignKey):
                 add_to_serialize_list(
