@@ -1,0 +1,34 @@
+from django.conf import settings
+from django.db import models
+from django.utils.module_loading import import_string
+
+from fixture_magic.utils import (
+    add_to_serialize_list,
+    get_fields,
+    get_m2m,
+)
+
+FIXTURE_MAGIC_HANDLERS_SETTING_STRING = 'FIXTURE_MAGIC_HANDLERS'
+
+
+def prepare_handlers():
+    handlers = getattr(
+        settings,
+        FIXTURE_MAGIC_HANDLERS_SETTING_STRING,
+        {}
+    )
+    for key in handlers:
+        handlers[key] = import_string(handlers[key])()
+    return handlers
+
+
+class BaseModelHandler:
+    @staticmethod
+    def handle(instance):
+        for field in get_fields(instance):
+            if isinstance(field, models.ForeignKey):
+                add_to_serialize_list(
+                    [instance.__getattribute__(field.name)])
+        for field in get_m2m(instance):
+            add_to_serialize_list(
+                instance.__getattribute__(field.name).all())
