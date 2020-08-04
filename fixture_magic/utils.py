@@ -62,11 +62,11 @@ def serialize_fully():
     handlers = prepare_handlers()
     default_handler = BaseModelHandler()
     while index < len(serialize_me):
-        full_model_name = get_instance_model_full_name(serialize_me[index])
-        if full_model_name in handlers:
-            handlers[full_model_name].handle(serialize_me[index])
-        else:
-            default_handler.handle(serialize_me[index])
+        handler = handlers.get(
+            serialize_me[index]._meta.label,
+            default_handler
+        )
+        handler.handle(serialize_me[index])
 
         index += 1
 
@@ -91,10 +91,3 @@ def add_to_serialize_list(objs):
         if key not in seen:
             serialize_me.append(obj)
             seen[key] = 1
-
-
-def get_instance_model_full_name(instance):
-    return "{}.{}".format(
-        instance._meta.app_label,
-        instance._meta.model_name
-    )

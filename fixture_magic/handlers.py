@@ -9,7 +9,7 @@ def prepare_handlers():
     handlers = getattr(
         settings,
         FIXTURE_MAGIC_HANDLERS_SETTING_STRING,
-        {}
+        {},
     )
     for key in handlers:
         handlers[key] = import_string(handlers[key])()
@@ -19,6 +19,11 @@ def prepare_handlers():
 class BaseModelHandler:
     @staticmethod
     def handle(instance):
+        """Handle model instance serialization.
+
+        By default it adds all ForeignKey and m2m fields to serialization
+        queue.
+        """
         from fixture_magic.utils import (
             add_to_serialize_list,
             get_fields,
@@ -27,7 +32,9 @@ class BaseModelHandler:
         for field in get_fields(instance):
             if isinstance(field, models.ForeignKey):
                 add_to_serialize_list(
-                    [instance.__getattribute__(field.name)])
+                    [getattr(instance, field.name)],
+                )
         for field in get_m2m(instance):
             add_to_serialize_list(
-                instance.__getattribute__(field.name).all())
+                getattr(instance, field.name).all(),
+            )
